@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1387e4b608c1b314b8179c11200c0183
+guid: 3156e43e5c70b6247a2c111b8baa27c2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8252998301616539082
-    second: CoinInEmpty_0
+      213: 1137664941030093313
+    second: TJunction2 (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CoinInEmpty_0
+      name: TJunction2 (1)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -114,8 +114,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ac581c3aa3a888270800000000000000
-      internalID: 8252998301616539082
+      spriteID: 102b38b7c3cc9cf00800000000000000
+      internalID: 1137664941030093313
       vertices: []
       indices: 
       edges: []
@@ -131,7 +131,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      CoinInEmpty_0: 8252998301616539082
+      TJunction2 (1)_0: 1137664941030093313
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

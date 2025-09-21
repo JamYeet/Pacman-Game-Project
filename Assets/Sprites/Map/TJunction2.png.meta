@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 24b1f500a8b2c8441891dd964b40845e
+guid: 54da4d40e8064584aa3743667425745f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3463303625187846701
-    second: BatInEmpty_0
+      213: 1990490219859444164
+    second: TJunction2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BatInEmpty_0
+      name: TJunction2_0
       rect:
         serializedVersion: 2
         x: 0
@@ -114,8 +114,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d2ae4a83c40201030800000000000000
-      internalID: 3463303625187846701
+      spriteID: 4c18c931f44af9b10800000000000000
+      internalID: 1990490219859444164
       vertices: []
       indices: 
       edges: []
@@ -131,7 +131,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      BatInEmpty_0: 3463303625187846701
+      TJunction2_0: 1990490219859444164
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

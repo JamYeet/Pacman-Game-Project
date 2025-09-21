@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3f85b54114d97ec4380c04707b2c8f0e
+guid: 12e1d7144aad30548b7ee196a8378b61
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5115786069859953158
-    second: CashInEmpty_0
+      213: 8995154407686431259
+    second: Empty_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CashInEmpty_0
+      name: Empty_0
       rect:
         serializedVersion: 2
         x: 0
@@ -114,8 +114,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: af51b1f8ca31109b0800000000000000
-      internalID: -5115786069859953158
+      spriteID: b1260f1864535dc70800000000000000
+      internalID: 8995154407686431259
       vertices: []
       indices: 
       edges: []
@@ -131,7 +131,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      CashInEmpty_0: -5115786069859953158
+      Empty_0: 8995154407686431259
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
