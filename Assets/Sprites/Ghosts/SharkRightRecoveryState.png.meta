@@ -1,19 +1,13 @@
 fileFormatVersion: 2
-guid: bf914a89373f6bb4488501d92c8d9202
+guid: 920594bfdbb9d264daba5bf1ebbfa315
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7046257211853952325
-    second: PlayerUpWalkAnim_0
+      213: -6282056182526919471
+    second: SharkRightRecoveryState_0
   - first:
-      213: -9182363349721972155
-    second: PlayerUpWalkAnim_1
-  - first:
-      213: -3967114206715082998
-    second: PlayerUpWalkAnim_2
-  - first:
-      213: -2034842237251138832
-    second: PlayerUpWalkAnim_3
+      213: -984821139459302823
+    second: SharkRightRecoveryState_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,85 +103,43 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_0
+      name: SharkRightRecoveryState_0
       rect:
         serializedVersion: 2
         x: 8
-        y: 34
+        y: 36
         width: 16
-        height: 28
+        height: 24
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bba2963066aa63e90800000000000000
-      internalID: -7046257211853952325
+      spriteID: 1dcbf6d8f27a1d8a0800000000000000
+      internalID: -6282056182526919471
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_1
-      rect:
-        serializedVersion: 2
-        x: 40
-        y: 34
-        width: 16
-        height: 30
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 54281450f21b19080800000000000000
-      internalID: -9182363349721972155
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: PlayerUpWalkAnim_2
+      name: SharkRightRecoveryState_1
       rect:
         serializedVersion: 2
         x: 8
-        y: 2
+        y: 8
         width: 16
-        height: 28
+        height: 22
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a07875dc5aaf1f8c0800000000000000
-      internalID: -3967114206715082998
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: PlayerUpWalkAnim_3
-      rect:
-        serializedVersion: 2
-        x: 40
-        y: 2
-        width: 16
-        height: 30
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0fa4faa24c9c2c3e0800000000000000
-      internalID: -2034842237251138832
+      spriteID: 95a9b3734663552f0800000000000000
+      internalID: -984821139459302823
       vertices: []
       indices: 
       edges: []
@@ -195,7 +147,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: ef7d100574a785c40bdd72a8906a96d0
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -203,10 +155,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      PlayerUpWalkAnim_0: -7046257211853952325
-      PlayerUpWalkAnim_1: -9182363349721972155
-      PlayerUpWalkAnim_2: -3967114206715082998
-      PlayerUpWalkAnim_3: -2034842237251138832
+      SharkRightRecoveryState_0: -6282056182526919471
+      SharkRightRecoveryState_1: -984821139459302823
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

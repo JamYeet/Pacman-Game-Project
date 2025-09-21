@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: bf914a89373f6bb4488501d92c8d9202
+guid: 3134182756a13824b80dd97df1690426
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7046257211853952325
-    second: PlayerUpWalkAnim_0
+      213: -5161288038407844856
+    second: SharkDownWalkAnim_0
   - first:
-      213: -9182363349721972155
-    second: PlayerUpWalkAnim_1
+      213: -4266194515313677425
+    second: SharkDownWalkAnim_1
   - first:
-      213: -3967114206715082998
-    second: PlayerUpWalkAnim_2
+      213: 418082974483682734
+    second: SharkDownWalkAnim_2
   - first:
-      213: -2034842237251138832
-    second: PlayerUpWalkAnim_3
+      213: -5976962834981794551
+    second: SharkDownWalkAnim_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,13 +109,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_0
+      name: SharkDownWalkAnim_0
       rect:
         serializedVersion: 2
         x: 8
-        y: 34
+        y: 36
         width: 16
-        height: 28
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -123,20 +123,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bba2963066aa63e90800000000000000
-      internalID: -7046257211853952325
+      spriteID: 80c4a3fefdb6f58b0800000000000000
+      internalID: -5161288038407844856
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_1
+      name: SharkDownWalkAnim_1
       rect:
         serializedVersion: 2
         x: 40
-        y: 34
+        y: 36
         width: 16
-        height: 30
+        height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,20 +144,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 54281450f21b19080800000000000000
-      internalID: -9182363349721972155
+      spriteID: f8b220c01be6bc4c0800000000000000
+      internalID: -4266194515313677425
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_2
+      name: SharkDownWalkAnim_2
       rect:
         serializedVersion: 2
         x: 8
-        y: 2
+        y: 4
         width: 16
-        height: 28
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -165,20 +165,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a07875dc5aaf1f8c0800000000000000
-      internalID: -3967114206715082998
+      spriteID: ea51dbc00445dc500800000000000000
+      internalID: 418082974483682734
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_3
+      name: SharkDownWalkAnim_3
       rect:
         serializedVersion: 2
         x: 40
-        y: 2
+        y: 4
         width: 16
-        height: 30
+        height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -186,8 +186,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0fa4faa24c9c2c3e0800000000000000
-      internalID: -2034842237251138832
+      spriteID: 90dc23908ff8d0da0800000000000000
+      internalID: -5976962834981794551
       vertices: []
       indices: 
       edges: []
@@ -195,7 +195,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: ef7d100574a785c40bdd72a8906a96d0
+    spriteID: c8fc0ac8ff34ced42a24a7539d8cb1af
     internalID: 0
     vertices: []
     indices: 
@@ -203,10 +203,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      PlayerUpWalkAnim_0: -7046257211853952325
-      PlayerUpWalkAnim_1: -9182363349721972155
-      PlayerUpWalkAnim_2: -3967114206715082998
-      PlayerUpWalkAnim_3: -2034842237251138832
+      SharkDownWalkAnim_0: -5161288038407844856
+      SharkDownWalkAnim_1: -4266194515313677425
+      SharkDownWalkAnim_2: 418082974483682734
+      SharkDownWalkAnim_3: -5976962834981794551
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

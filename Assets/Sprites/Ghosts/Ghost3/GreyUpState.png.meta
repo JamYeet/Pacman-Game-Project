@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: bf914a89373f6bb4488501d92c8d9202
+guid: 3b9e356115bcb12478326a3d2106aab5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7046257211853952325
-    second: PlayerUpWalkAnim_0
+      213: 6555296929625393685
+    second: GreyUpState_0
   - first:
-      213: -9182363349721972155
-    second: PlayerUpWalkAnim_1
+      213: -3491781500386283159
+    second: GreyUpState_1
   - first:
-      213: -3967114206715082998
-    second: PlayerUpWalkAnim_2
+      213: -4157499995824061424
+    second: GreyUpState_2
   - first:
-      213: -2034842237251138832
-    second: PlayerUpWalkAnim_3
+      213: -2192304427655163198
+    second: GreyUpState_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,13 +109,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_0
+      name: GreyUpState_0
       rect:
         serializedVersion: 2
         x: 8
-        y: 34
+        y: 36
         width: 16
-        height: 28
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -123,20 +123,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bba2963066aa63e90800000000000000
-      internalID: -7046257211853952325
+      spriteID: 51ac78773d719fa50800000000000000
+      internalID: 6555296929625393685
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_1
+      name: GreyUpState_1
       rect:
         serializedVersion: 2
         x: 40
-        y: 34
+        y: 36
         width: 16
-        height: 30
+        height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,20 +144,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 54281450f21b19080800000000000000
-      internalID: -9182363349721972155
+      spriteID: 961f134c933ba8fc0800000000000000
+      internalID: -3491781500386283159
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_2
+      name: GreyUpState_2
       rect:
         serializedVersion: 2
         x: 8
-        y: 2
+        y: 4
         width: 16
-        height: 28
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -165,20 +165,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a07875dc5aaf1f8c0800000000000000
-      internalID: -3967114206715082998
+      spriteID: 014083bf7c79d46c0800000000000000
+      internalID: -4157499995824061424
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerUpWalkAnim_3
+      name: GreyUpState_3
       rect:
         serializedVersion: 2
         x: 40
-        y: 2
+        y: 4
         width: 16
-        height: 30
+        height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -186,8 +186,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0fa4faa24c9c2c3e0800000000000000
-      internalID: -2034842237251138832
+      spriteID: 2c219160dbe5391e0800000000000000
+      internalID: -2192304427655163198
       vertices: []
       indices: 
       edges: []
@@ -195,7 +195,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: ef7d100574a785c40bdd72a8906a96d0
+    spriteID: afa15653bb68d5245a9ab6e9cf55f7c1
     internalID: 0
     vertices: []
     indices: 
@@ -203,10 +203,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      PlayerUpWalkAnim_0: -7046257211853952325
-      PlayerUpWalkAnim_1: -9182363349721972155
-      PlayerUpWalkAnim_2: -3967114206715082998
-      PlayerUpWalkAnim_3: -2034842237251138832
+      GreyUpState_0: 6555296929625393685
+      GreyUpState_1: -3491781500386283159
+      GreyUpState_2: -4157499995824061424
+      GreyUpState_3: -2192304427655163198
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
