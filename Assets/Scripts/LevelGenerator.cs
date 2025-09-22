@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEditor.PlayerSettings;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -65,12 +67,17 @@ public class LevelGenerator : MonoBehaviour
         int[,] right = MirrorHorizontal(levelMap);
         BuildQuadrant(right, cols * cellSize, 0f);
 
-        int[,] bottomL = MirrorVertical(levelMap, skipCenterRowOnVerticalMirror);
+        int[,] bottomL = MirrorVertical(levelMap);
         float bottomYOffset = -(bottomL.GetLength(0)) * cellSize - cellSize;
         BuildQuadrant(bottomL, 0f, bottomYOffset);
   
-        int[,] bottomR = MirrorVertical(right, skipCenterRowOnVerticalMirror);
+        int[,] bottomR = MirrorVertical(right);
         BuildQuadrant(bottomR, cols * cellSize, bottomYOffset);
+
+        float centerX = cols * cellSize;
+        float centerY = -(rows * cellSize -1);
+        
+        Camera.main.transform.position = new Vector3(centerX, centerY, Camera.main.transform.position.z);
     }
 
     void BuildQuadrant(int[,] map, float offsetX, float offsetY)
@@ -88,17 +95,35 @@ public class LevelGenerator : MonoBehaviour
                 if (tileType == 5 || tileType == 6)
                 {
                     if (emptyPrefab != null)
+                    {
                         Instantiate(emptyPrefab, position, Quaternion.identity, wallsRoot);
+                    }
 
-                    Instantiate(tileType == 5 ? pelletPrefab : powerPelletPrefab, position, Quaternion.identity, pelletsRoot);
+                    GameObject pellet;
+                    if (tileType == 5)
+                    {
+                        pellet = Instantiate(pelletPrefab, position, Quaternion.identity, pelletsRoot);
+                    }
+                    else
+                    {
+                        pellet = Instantiate(powerPelletPrefab, position, Quaternion.identity, pelletsRoot);
+                    }
+
+                    pellet.GetComponent<SpriteRenderer>().sortingOrder = 1;
                     continue;
                 }
 
-                if (tileType == 0 && emptyPrefab == null) continue;
+                if (tileType == 0 && emptyPrefab == null)
+                {
+                    continue;
+                }
 
                 Quaternion rot = DetermineRotation(tileType, row, col, map, rows, cols);
                 GameObject prefab = PrefabFor(tileType);
-                if (prefab == null) continue;
+                if (prefab == null)
+                {
+                    continue;
+                }
 
                 Transform parent = ParentFor(tileType);
                 Instantiate(prefab, position, rot, parent);
@@ -136,23 +161,35 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    int GetTile(int[,] map, int rows, int cols, int r, int c)
+    int GetTile(int[,] map, int rows, int cols, int row, int col)
     {
-        if (r < 0 || c < 0 || r >= rows || c >= cols)
+        if (row < 0 || col < 0 || row >= rows || col >= cols)
             return -1;
-        return map[r, c];
+        return map[row, col];
     }
 
-    Quaternion DetermineRotation(int code, int r, int c, int[,] map, int rows, int cols)
+    Quaternion DetermineRotation(int code, int row, int col, int[,] map, int rows, int cols)
     {
-        if (code <= 0) return Quaternion.identity;
+        if (code <= 0)
+        {
+            return Quaternion.identity;
+        }
 
-        bool IsConn(int v) => (v == 1 || v == 2 || v == 3 || v == 4 || v == 7 || v == 8);
+        bool IsConn(int v)
+        {
+            if (v == 1) return true;
+            if (v == 2) return true;
+            if (v == 3) return true;
+            if (v == 4) return true;
+            if (v == 7) return true;
+            if (v == 8) return true;;
+            return false;
+        }
 
-        int up = GetTile(map, rows, cols, r - 1, c);
-        int down = GetTile(map, rows, cols, r + 1, c);
-        int left = GetTile(map, rows, cols, r, c - 1);
-        int right = GetTile(map, rows, cols, r, c + 1);
+        int up = GetTile(map, rows, cols, row - 1, col);
+        int down = GetTile(map, rows, cols, row + 1, col);
+        int left = GetTile(map, rows, cols, row, col - 1);
+        int right = GetTile(map, rows, cols, row, col + 1);
 
         bool U = IsConn(up);
         bool D = IsConn(down);
@@ -167,60 +204,89 @@ public class LevelGenerator : MonoBehaviour
             case 4:
             case 8:
                 {
-                    int lr = (L ? 1 : 0) + (R ? 1 : 0);
-                    int ud = (U ? 1 : 0) + (D ? 1 : 0);
-                    rot = (ud > lr) ? 90f : 0f;
+                    int leftRight = 0;
+                    if (L) leftRight += 1;
+                    if (R) leftRight += 1;
+
+                    int UpDown = 0;
+                    if (U) UpDown += 1;
+                    if (D) UpDown += 1;
+
+                    if (UpDown > leftRight)
+                    {
+                        rot = 90f;
+                    }
+                    else
+                    {
+                        rot = 0f;
+                    }
                     break;
                 }
 
             case 1:
             case 3:
-                if (U && L) rot = 0f;
-                else if (U && R) rot = 270f;
-                else if (D && R) rot = 180f;
-                else if (D && L) rot = 90f;
-                break;
+                {
+                    if (U && L)
+                    {
+                        rot = 0f;
+                    }
+                    else if (U && R)
+                    {
+                        rot = 270f;
+                    }
+                    else if (D && R)
+                    {
+                        rot = 180f;
+                    }
+                    else if (D && L)
+                    {
+                        rot = 90f;
+                    }
+                    break;
+                }
 
             default:
-                rot = 0f;
-                break;
+                {
+                    rot = 0f;
+                    break;
+                }
         }
 
         return Quaternion.Euler(0f, 0f, rot);
     }
 
 
-    int[,] MirrorHorizontal(int[,] src)
+    int[,] MirrorHorizontal(int[,] map)
     {
-        int rows = src.GetLength(0);
-        int cols = src.GetLength(1);
-        int[,] dst = new int[rows, cols];
+        int rows = map.GetLength(0);
+        int cols = map.GetLength(1);
+        int[,] distance = new int[rows, cols];
 
         for (int row = 0; row < rows; row++)
             for (int col = 0; col < cols; col++)
-                dst[row, col] = src[row, cols - 1 - col];
+                distance[row, col] = map[row, cols - 1 - col];
 
-        return dst;
+        return distance;
     }
 
-    int[,] MirrorVertical(int[,] src, bool skipFirstRowOfMirrored)
+    int[,] MirrorVertical(int[,] map)
     {
-        int rows = src.GetLength(0);
-        int cols = src.GetLength(1);
-        int outRows = skipFirstRowOfMirrored ? rows - 1 : rows;
+        int rows = map.GetLength(0);
+        int cols = map.GetLength(1);
 
-        int[,] dst = new int[outRows, cols];
+        int outRows = rows - 1;
+        int[,] distance = new int[outRows, cols];
 
-        // Mirror rows top->bottom
-        // If skipping: drop the first row of the mirrored result to avoid doubling the middle row
-        int startR = skipFirstRowOfMirrored ? 1 : 0;
+        int startR = 1;
 
         for (int i = 0; i < outRows; i++)
         {
-            int srcR = rows - 1 - (i + startR);
+            int mapRow = rows - 1 - (i + startR);
             for (int col = 0; col < cols; col++)
-                dst[i, col] = src[srcR, col];
+            {
+                distance[i, col] = map[mapRow, col];
+            }
         }
-        return dst;
+        return distance;
     }
 }
