@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: c2615435b11ec1747bf434dedbeb2901
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - manualLevelRoot: {instanceID: 0}
+  - generatedRoot: {instanceID: 0}
+  - wallsRoot: {instanceID: 0}
+  - pelletsRoot: {instanceID: 0}
+  - specialRoot: {instanceID: 0}
+  - emptyPrefab: {fileID: 8491956611538020495, guid: 30725c0e2f5aa204ab6e93653a967966, type: 3}
+  - outsideCornerPrefab: {fileID: 8491956611538020495, guid: c7087ad79095ea44abafd40c7416b3de, type: 3}
+  - outsideWallPrefab: {fileID: 2817703079466987257, guid: cc45381da9feba845b303d62ff794b90, type: 3}
+  - insideCornerPrefab: {fileID: 8491956611538020495, guid: a719a1e5445c5f6439626714c97a16bb, type: 3}
+  - insideWallPrefab: {fileID: 8491956611538020495, guid: 35fc4ad06e305934fa6afa97ada6232e, type: 3}
+  - pelletPrefab: {fileID: 8491956611538020495, guid: 041dd289e1d935749bd01204aebd5e18, type: 3}
+  - powerPelletPrefab: {fileID: 8491956611538020495, guid: 8467a3e464e074b43bb252f2cf7e9a41, type: 3}
+  - tJunctionPrefab: {fileID: 8491956611538020495, guid: b470e48d60262c0458d415ccd1929c18, type: 3}
+  - ghostExitPrefab: {fileID: 8491956611538020495, guid: 5f7edba556ebcbd4795e1ae7df543cb6, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
