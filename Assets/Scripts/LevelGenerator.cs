@@ -30,8 +30,6 @@ public class LevelGenerator : MonoBehaviour
     public float cellSize = 1f;
     public bool skipCenterRowOnVerticalMirror = false;
 
-    public Transform topLeftAnchor;
-
     public RuntimeAnimatorController powerPelletAnimatorController;
 
     private int[,] levelMap = new int[,]

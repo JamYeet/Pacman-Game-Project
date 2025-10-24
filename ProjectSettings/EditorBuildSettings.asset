@@ -8,5 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ManualLevel.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/StartScene.unity
+    guid: fd3e1c209d7bc1f4b99c8a8f0b428565
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
