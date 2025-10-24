@@ -30,6 +30,9 @@ public class LevelGenerator : MonoBehaviour
     public float cellSize = 1f;
     public bool skipCenterRowOnVerticalMirror = false;
 
+    public Transform topLeftAnchor;
+
+    public RuntimeAnimatorController powerPelletAnimatorController;
 
     private int[,] levelMap = new int[,]
     {
@@ -58,25 +61,26 @@ public class LevelGenerator : MonoBehaviour
 
     void GenerateLevel()
     {
-        BuildQuadrant(levelMap, 0f, 0f);
+        float baseX = -13.5f;
+        float baseY = 14.5f;
 
-        
         int rows = levelMap.GetLength(0);
         int cols = levelMap.GetLength(1);
 
+        BuildQuadrant(levelMap, baseX, baseY);
+
         int[,] right = MirrorHorizontal(levelMap);
-        BuildQuadrant(right, cols * cellSize, 0f);
+        BuildQuadrant(right, baseX + cols * cellSize, baseY);
 
         int[,] bottomL = MirrorVertical(levelMap);
-        float bottomYOffset = -(bottomL.GetLength(0)) * cellSize - cellSize;
-        BuildQuadrant(bottomL, 0f, bottomYOffset);
-  
-        int[,] bottomR = MirrorVertical(right);
-        BuildQuadrant(bottomR, cols * cellSize, bottomYOffset);
+        float bottomYOffset = baseY - (bottomL.GetLength(0) * cellSize + cellSize);
+        BuildQuadrant(bottomL, baseX, bottomYOffset);
 
-        float centerX = cols * cellSize;
-        float centerY = -(rows * cellSize -1);
-        
+        int[,] bottomR = MirrorVertical(right);
+        BuildQuadrant(bottomR, baseX + cols * cellSize, bottomYOffset);
+
+        float centerX = baseX + (cols * cellSize);
+        float centerY = baseY - (rows * cellSize) + 1f;
         Camera.main.transform.position = new Vector3(centerX, centerY, Camera.main.transform.position.z);
     }
 
@@ -107,6 +111,14 @@ public class LevelGenerator : MonoBehaviour
                     else
                     {
                         pellet = Instantiate(powerPelletPrefab, position, Quaternion.identity, pelletsRoot);
+                        pellet.transform.localScale = new Vector3(2f, 2f, 2f);
+
+                        Animator animator = pellet.GetComponent<Animator>();
+                        if (animator == null)
+                            animator = pellet.AddComponent<Animator>();
+
+                        if (powerPelletAnimatorController != null)
+                            animator.runtimeAnimatorController = powerPelletAnimatorController;
                     }
 
                     pellet.GetComponent<SpriteRenderer>().sortingOrder = 1;
