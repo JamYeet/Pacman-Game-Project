@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using static UnityEditor.PlayerSettings;
 using static UnityEngine.EventSystems.EventTrigger;
 
@@ -32,6 +33,8 @@ public class LevelGenerator : MonoBehaviour
 
     public RuntimeAnimatorController powerPelletAnimatorController;
 
+    public Button exitButton;
+
     private int[,] levelMap = new int[,]
     {
         {1,2,2,2,2,2,2,2,2,2,2,2,2,7},
@@ -55,7 +58,13 @@ public class LevelGenerator : MonoBehaviour
     {
         Destroy(manualLevelRoot.gameObject);
         GenerateLevel();
+
+        if (exitButton != null)
+        {
+            exitButton.onClick.AddListener(() => SceneManager.LoadScene("StartScene"));
+        }
     }
+
 
     void GenerateLevel()
     {
