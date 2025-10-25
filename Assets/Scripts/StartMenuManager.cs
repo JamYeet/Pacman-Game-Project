@@ -33,8 +33,6 @@ public class StartMenuManager : MonoBehaviour
 
         if (level1Button != null)
             level1Button.onClick.AddListener(() => LoadScene("ManualLevel"));
-        if (level2Button != null)
-            level2Button.onClick.AddListener(() => LoadScene("InnovationScene"));
 
         if (dotsA != null) dotsA.SetActive(true);
         if (dotsB != null) dotsB.SetActive(false);
