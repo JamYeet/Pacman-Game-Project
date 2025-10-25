@@ -54,10 +54,15 @@ public class LevelGenerator : MonoBehaviour
         {0,0,0,0,0,0,5,0,0,0,4,0,0,0},
 };
 
+    public static LevelGenerator Instance { get; private set; }
+    public int[,] fullMap;
+
     void Start()
     {
+        Instance = this;
         Destroy(manualLevelRoot.gameObject);
         GenerateLevel();
+        GenerateFullMap();
 
         if (exitButton != null)
         {
@@ -65,6 +70,56 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    void GenerateFullMap()
+    {
+        int rows = levelMap.GetLength(0);
+        int cols = levelMap.GetLength(1);
+
+        // Same mirrors you use when instantiating
+        int[,] right = MirrorHorizontal(levelMap);
+        int[,] bottomL = MirrorVertical(levelMap); // NOTE: your MirrorVertical returns rows-1
+        int[,] bottomR = MirrorVertical(right);
+
+        int bottomRows = bottomL.GetLength(0);      // = rows - 1 with your current mirror
+        int fullRows = rows + bottomRows;         // top + bottom (no extra blank row)
+        int fullCols = cols * 2;
+
+        fullMap = new int[fullRows, fullCols];
+
+        // TL
+        CopyQuadrant(levelMap, 0, 0);
+        // TR
+        CopyQuadrant(right, 0, cols);
+        // BL (starts immediately after top, no extra gap)
+        CopyQuadrant(bottomL, rows, 0);
+        // BR
+        CopyQuadrant(bottomR, rows, cols);
+
+        Debug.Log("==== FULL MAP ====");
+        string mapOutput = "";
+        int fullaRows = fullMap.GetLength(0);
+        int fullaCols = fullMap.GetLength(1);
+
+        for (int r = 0; r < fullRows; r++)
+        {
+            for (int c = 0; c < fullCols; c++)
+            {
+                mapOutput += fullMap[r, c].ToString();
+            }
+            mapOutput += "\n";
+        }
+        Debug.Log(mapOutput);
+
+    }
+
+    void CopyQuadrant(int[,] src, int destRow, int destCol)
+    {
+        int rMax = src.GetLength(0);
+        int cMax = src.GetLength(1);
+        for (int r = 0; r < rMax; r++)
+            for (int c = 0; c < cMax; c++)
+                fullMap[destRow + r, destCol + c] = src[r, c];
+    }
 
     void GenerateLevel()
     {
