@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using static UnityEditor.PlayerSettings;
 using static UnityEngine.EventSystems.EventTrigger;
 
+[DefaultExecutionOrder(-100)]
 public class LevelGenerator : MonoBehaviour
 {
     // Start is called before the first frame update
