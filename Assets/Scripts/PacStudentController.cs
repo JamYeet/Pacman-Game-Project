@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -6,7 +7,6 @@ using UnityEngine.EventSystems;
 
 public class PacStudentController : MonoBehaviour
 {
-
     public float moveSpeed = 5f;
 
     private Vector2Int currentGridPos;
@@ -27,31 +27,17 @@ public class PacStudentController : MonoBehaviour
 
     public AudioSource audioSource;
     public AudioClip moveClip;
-
+    public AudioClip bumpClip;
     public ParticleSystem dustEffect;
+    public ParticleSystem wallBumpEffect;
+    private float bumpTimer= 0f;
+    private bool bumpCooldown = false;
 
     private LevelGenerator levelGen;
-
+    
+    private Vector2 lastAnimDir = Vector2.zero;
 
     private static readonly Vector2 MAP_ORIGIN = new Vector2(-13.5f, 14.5f);
-
-    Vector3 GridToWorld(Vector2Int g)
-    {
-        // Y increases downward in the grid, so subtract on world Y
-        return new Vector3(
-            MAP_ORIGIN.x + g.x * cellSize,
-            MAP_ORIGIN.y - g.y * cellSize,
-            transform.position.z
-        );
-    }
-
-    Vector2Int WorldToGrid(Vector3 w)
-    {
-        return new Vector2Int(
-            Mathf.RoundToInt((w.x - MAP_ORIGIN.x) / cellSize),
-            Mathf.RoundToInt((MAP_ORIGIN.y - w.y) / cellSize) // note the inverted Y
-        );
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +55,7 @@ public class PacStudentController : MonoBehaviour
     void Update()
     {
         HandleInput();
+
         if (!isMoving)
         {
             Move();
@@ -107,17 +94,50 @@ public class PacStudentController : MonoBehaviour
 
     void Move()
     {
+        bool moved = false;
+
+
         if (CanMoveTo(currentGridPos + lastInput))
         {
             currentInput = lastInput;
             BeginMove(currentGridPos + currentInput);
+            moved = true;
+            bumpCooldown = false;
         }
         else if (CanMoveTo(currentGridPos + currentInput))
         {
             BeginMove(currentGridPos + currentInput);
-
+            moved = true;
+            bumpCooldown = false;
         }
+        if (!moved)
+        {
+            isMoving = false;
 
+            // Only trigger bump if cooldown expired
+            if (bumpTimer <= 0f && bumpCooldown == false)
+            {
+                bumpCooldown = true;
+                Debug.Log("Bump");
+
+                if (audioSource != null && bumpClip != null)
+                {
+                    audioSource.Stop();
+                    audioSource.PlayOneShot(bumpClip);
+                }
+
+                // Play bump particles
+                if (wallBumpEffect != null)
+                {
+                    Vector3 bumpPos = GridToWorld(currentGridPos + lastInput);
+                    wallBumpEffect.transform.position = bumpPos;
+                    wallBumpEffect.Play();
+                }
+
+                // Start cooldown (so the sound doesn’t spam)
+                bumpTimer = 0.25f; // adjust timing as you like
+            }
+        }
     }
 
     void LerpMove()
@@ -129,7 +149,7 @@ public class PacStudentController : MonoBehaviour
         {
             transform.position = targetPos;
             currentGridPos = targetGridPos;
-            isMoving = false;
+            isMoving = false; // stop moving cleanly
         }
     }
 
@@ -141,29 +161,42 @@ public class PacStudentController : MonoBehaviour
         targetPos = GridToWorld(targetGridPos);
         lerpProgress = 0f;
     }
-
-    private Vector2 lastAnimDir = Vector2.zero;
+    private bool isActuallyMoving = false;
     void UpdateAnimation()
     {
         if (animator == null) return;
 
+        // Detect when we start moving after being idle
+        if (!isActuallyMoving && isMoving)
+        {
+            isActuallyMoving = true;
+            animator.SetBool("IsMoving", true);
+            Debug.Log("Anim started");
+        }
+
+        // Detect when we’ve come to a complete stop
+        if (isActuallyMoving && !isMoving && !CanMoveTo(currentGridPos + currentInput))
+        {
+            isActuallyMoving = false;
+            animator.SetBool("IsMoving", false);
+            Debug.Log("Anim stopped");
+        }
+
+        // Direction changes only when input changes
         if (currentInput != lastAnimDir)
         {
-            if (currentInput.x != 0  || currentInput.y != 0)
-            {
-                animator.SetBool("IsMoving", isMoving);
-            }
-
             animator.SetFloat("MoveX", currentInput.x);
             animator.SetFloat("MoveY", currentInput.y);
             lastAnimDir = currentInput;
         }
-
     }
-
     void HandleAudioAndParticles()
     {
-        if (isMoving)
+        if (bumpTimer > 0f)
+        {
+            bumpTimer -= Time.deltaTime;
+        }
+        else if (isMoving)
         {
             if (audioSource != null && !audioSource.isPlaying)
             {
@@ -218,6 +251,24 @@ public class PacStudentController : MonoBehaviour
         // Walkability
         if (tile == 8) return false;                 // ghost gate blocks PacStudent
         return tile == 0 || tile == 5 || tile == 6;  // empty/pellet/power
+    }
+
+    Vector3 GridToWorld(Vector2Int g)
+    {
+        // Y increases downward in the grid, so subtract on world Y
+        return new Vector3(
+            MAP_ORIGIN.x + g.x * cellSize,
+            MAP_ORIGIN.y - g.y * cellSize,
+            transform.position.z
+        );
+    }
+
+    Vector2Int WorldToGrid(Vector3 w)
+    {
+        return new Vector2Int(
+            Mathf.RoundToInt((w.x - MAP_ORIGIN.x) / cellSize),
+            Mathf.RoundToInt((MAP_ORIGIN.y - w.y) / cellSize) // note the inverted Y
+        );
     }
 
 #if UNITY_EDITOR
