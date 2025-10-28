@@ -28,6 +28,7 @@ public class PacStudentController : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip moveClip;
     public AudioClip bumpClip;
+    public AudioClip coinPickUpClip;
     public ParticleSystem dustEffect;
     public ParticleSystem wallBumpEffect;
     private float bumpTimer= 0f;
@@ -149,7 +150,30 @@ public class PacStudentController : MonoBehaviour
         {
             transform.position = targetPos;
             currentGridPos = targetGridPos;
-            isMoving = false; // stop moving cleanly
+            isMoving = false;
+
+            HandleTeleport();
+        }
+    }
+
+    void HandleTeleport()
+    {
+        int[,] map = levelGen.fullMap;
+        int rows = map.GetLength(0);
+        int cols = map.GetLength(1);
+
+        // Teleport from left tunnel to right side
+        if (currentGridPos.x < 0)
+        {
+            currentGridPos = new Vector2Int(cols - 1, currentGridPos.y);
+            transform.position = GridToWorld(currentGridPos);
+        }
+
+        // Teleport from right tunnel to left side
+        else if (currentGridPos.x >= cols)
+        {
+            currentGridPos = new Vector2Int(0, currentGridPos.y);
+            transform.position = GridToWorld(currentGridPos);
         }
     }
 
@@ -171,7 +195,6 @@ public class PacStudentController : MonoBehaviour
         {
             isActuallyMoving = true;
             animator.SetBool("IsMoving", true);
-            Debug.Log("Anim started");
         }
 
         // Detect when we’ve come to a complete stop
@@ -179,7 +202,6 @@ public class PacStudentController : MonoBehaviour
         {
             isActuallyMoving = false;
             animator.SetBool("IsMoving", false);
-            Debug.Log("Anim stopped");
         }
 
         // Direction changes only when input changes
@@ -253,6 +275,30 @@ public class PacStudentController : MonoBehaviour
         return tile == 0 || tile == 5 || tile == 6;  // empty/pellet/power
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Pellet"))
+        {
+            audioSource.Stop();
+            audioSource.PlayOneShot(coinPickUpClip);
+
+            GameManager.Instance.AddScore(10);
+            Destroy(collision.gameObject);
+        }
+        else if (collision.CompareTag("PowerPellet"))
+        {
+            Debug.Log("PowerPellet! 50 Points!");
+            GameManager.Instance.ActivatePowerPellet();
+            Destroy(collision.gameObject);
+        }
+        else if (collision.CompareTag("BonusCherry"))
+        {
+            Debug.Log("BonusCherry! 100 Points!");
+            GameManager.Instance.AddScore(100);
+            Destroy(collision.gameObject);
+        }
+    }
+
     Vector3 GridToWorld(Vector2Int g)
     {
         // Y increases downward in the grid, so subtract on world Y
@@ -260,14 +306,6 @@ public class PacStudentController : MonoBehaviour
             MAP_ORIGIN.x + g.x * cellSize,
             MAP_ORIGIN.y - g.y * cellSize,
             transform.position.z
-        );
-    }
-
-    Vector2Int WorldToGrid(Vector3 w)
-    {
-        return new Vector2Int(
-            Mathf.RoundToInt((w.x - MAP_ORIGIN.x) / cellSize),
-            Mathf.RoundToInt((MAP_ORIGIN.y - w.y) / cellSize) // note the inverted Y
         );
     }
 

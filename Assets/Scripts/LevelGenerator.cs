@@ -167,14 +167,17 @@ public class LevelGenerator : MonoBehaviour
                     }
 
                     GameObject pellet;
+
                     if (tileType == 5)
                     {
                         pellet = Instantiate(pelletPrefab, position, Quaternion.identity, pelletsRoot);
+                        pellet.tag = "Pellet";
                     }
                     else
                     {
                         pellet = Instantiate(powerPelletPrefab, position, Quaternion.identity, pelletsRoot);
                         pellet.transform.localScale = new Vector3(2f, 2f, 2f);
+                        pellet.tag = "PowerPellet";
 
                         Animator animator = pellet.GetComponent<Animator>();
                         if (animator == null)
@@ -187,6 +190,7 @@ public class LevelGenerator : MonoBehaviour
                     pellet.GetComponent<SpriteRenderer>().sortingOrder = 1;
                     continue;
                 }
+
 
                 if (tileType == 0 && emptyPrefab == null)
                 {

@@ -28,20 +28,20 @@ public class CherryController : MonoBehaviour
         switch (side)
         {
             case 0: // Left to Right
-                startPos = new Vector3(-levelSize.x / 2 - offset, Random.Range(-levelSize.y / 2, levelSize.y / 2), 0);
-                endPos = new Vector3(levelSize.x / 2 + offset, startPos.y, 0);
+                startPos = new Vector3(-levelSize.x / 2 - offset, levelCenter.y + 0.5f, 0);
+                endPos = new Vector3(levelSize.x / 2 + offset, levelCenter.y + 0.5f, 0);
                 break;
             case 1: // Right to Left
-                startPos = new Vector3(levelSize.x / 2 + offset, Random.Range(-levelSize.y / 2, levelSize.y / 2), 0);
-                endPos = new Vector3(-levelSize.x / 2 - offset, startPos.y, 0);
+                startPos = new Vector3(levelSize.x / 2 + offset, levelCenter.y + 0.5f, 0);
+                endPos = new Vector3(-levelSize.x / 2 - offset, levelCenter.y + 0.5f, 0);
                 break;
             case 2: // Top to Bottom
-                startPos = new Vector3(Random.Range(-levelSize.x / 2, levelSize.x / 2), levelSize.y / 2 + offset, 0);
-                endPos = new Vector3(startPos.x, -levelSize.y / 2 - offset, 0);
+                startPos = new Vector3(levelCenter.x, levelSize.y / 2 + offset, 0);
+                endPos = new Vector3(levelCenter.x, -levelSize.y / 2 - offset, 0);
                 break;
             case 3: // Bottom to Top
-                startPos = new Vector3(Random.Range(-levelSize.x / 2, levelSize.x / 2), -levelSize.y / 2 - offset, 0);
-                endPos = new Vector3(startPos.x, levelSize.y / 2 + offset, 0);
+                startPos = new Vector3(levelCenter.x, -levelSize.y / 2 - offset, 0);
+                endPos = new Vector3(levelCenter.x, levelSize.y / 2 + offset, 0);
                 break;
         }
         //
