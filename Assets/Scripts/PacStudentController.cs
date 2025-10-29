@@ -282,7 +282,7 @@ public class PacStudentController : MonoBehaviour
             audioSource.Stop();
             audioSource.PlayOneShot(coinPickUpClip);
 
-            GameManager.Instance.AddScore(10);
+            GameManager.Instance.OnCoinCollected();
             Destroy(collision.gameObject);
         }
         else if (collision.CompareTag("PowerPellet"))

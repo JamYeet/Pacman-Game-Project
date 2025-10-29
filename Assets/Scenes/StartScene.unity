@@ -899,6 +899,7 @@ GameObject:
   - component: {fileID: 518591132}
   - component: {fileID: 518591134}
   - component: {fileID: 518591133}
+  - component: {fileID: 518591135}
   m_Layer: 5
   m_Name: Ghost1
   m_TagString: Untagged
@@ -963,6 +964,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 518591131}
   m_CullTransparentMesh: 1
+--- !u!95 &518591135
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518591131}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &528801236
 GameObject:
   m_ObjectHideFlags: 0
@@ -2888,6 +2911,10 @@ MonoBehaviour:
   dotsA: {fileID: 1280223875}
   dotsB: {fileID: 120667700}
   blinkInterval: 0.3
+  level1ScoreText: {fileID: 1208086374}
+  level1TimeText: {fileID: 1846530432}
+  level2ScoreText: {fileID: 1003324978}
+  level2TimeText: {fileID: 1940036434}
 --- !u!82 &1252029054
 AudioSource:
   m_ObjectHideFlags: 0
