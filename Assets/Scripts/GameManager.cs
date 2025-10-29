@@ -7,9 +7,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public CherryManager cherryManager;
 
     public AudioSource musicSource;
     public AudioClip normalMusic;
+    public AudioClip playerDeathClip;
     public AudioClip introMusic;
     public AudioClip scaredMusic;
     public AudioClip ghostDeadMusic;
@@ -40,12 +42,19 @@ public class GameManager : MonoBehaviour
     public float deathPauseDuration = 3f;
     private bool playerIsDead = false;
 
+    public bool hasPowerPellet = false;
+
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+        }
+
         else
+        {
             Destroy(gameObject);
+        }
     }
 
     void Start()
@@ -81,17 +90,17 @@ public class GameManager : MonoBehaviour
             scaredTimer -= Time.deltaTime;
             ghostTimerText.text = Mathf.CeilToInt(scaredTimer).ToString();
 
-            // Recovering phase (3 seconds left)
             if (scaredTimer <= 3f)
             {
                 foreach (GhostController ghost in Object.FindObjectsByType<GhostController>(FindObjectsSortMode.None))
                 {
                     if (ghost.CurrentState == GhostState.Scared)
+                    { 
                         ghost.SetState(GhostState.Recovering);
+                    }
                 }
             }
 
-            // End scared state
             if (scaredTimer <= 0f)
             {
                 EndScaredState();
@@ -106,37 +115,47 @@ public class GameManager : MonoBehaviour
         while (count > 0)
         {
             if (countdownText != null)
+            {
                 countdownText.text = count.ToString();
-
+            }
             yield return new WaitForSeconds(1f);
             count--;
         }
 
-        // One last frame showing "1" before hiding
-        yield return new WaitForSeconds(0.5f);
+        if (countdownText != null)
+        {
+            countdownText.text = "GO!";
+        }
+
+        yield return new WaitForSeconds(1f);
 
         if (countdownHUD != null)
+        {
             countdownHUD.SetActive(false);
-
+        }
         EnableGameplay();
     }
 
     private void DisableGameplay()
     {
-        // Stop timer
         isTiming = false;
 
-        // Disable ghosts
         foreach (GhostController ghost in Object.FindObjectsByType<GhostController>(FindObjectsSortMode.None))
             ghost.enabled = false;
 
-        // Disable player movement
         PacStudentController player = FindFirstObjectByType<PacStudentController>();
         if (player != null)
+        {
             player.enabled = false;
+        }
+
+        if (cherryManager != null)
+        {
+            cherryManager.enabled = false;
+        }
     }
 
-    private void EnableGameplay()
+    private void EnableGameplay() 
     {
         if (musicSource != null && normalMusic != null)
         {
@@ -144,22 +163,27 @@ public class GameManager : MonoBehaviour
             musicSource.loop = true;
             musicSource.Play();
         }
-        // Start timer
+
         isTiming = true;
 
-        // Enable ghosts
         foreach (GhostController ghost in Object.FindObjectsByType<GhostController>(FindObjectsSortMode.None))
             ghost.enabled = true;
 
-        // Enable player
         PacStudentController player = FindFirstObjectByType<PacStudentController>();
         if (player != null)
+        {
             player.enabled = true;
+        }
+
+        if (cherryManager != null)
+        {
+            cherryManager.enabled = true;
+        }
     }
     public void OnCoinCollected()
     {
         collectedCoins++;
-        AddScore(10); // optional: add points for each coin
+        AddScore(10);
 
         if (collectedCoins >= totalCoins)
         {
@@ -170,26 +194,24 @@ public class GameManager : MonoBehaviour
     {
         AddScore(50);
         scaredTimer = 10f;
+        hasPowerPellet = true;
+
         if (musicSource != null && scaredMusic != null)
         {
-           musicSource.Stop();
-           musicSource.clip = scaredMusic;
-           musicSource.loop = true;
-           musicSource.Play();
+            musicSource.Stop();
+            musicSource.clip = scaredMusic;
+            musicSource.loop = true;
+            musicSource.Play();
         }
-            
+
         foreach (GhostController ghost in Object.FindObjectsByType<GhostController>(FindObjectsSortMode.None))
         {
-            if (ghost.CurrentState != GhostState.Dead &&
-            ghost.CurrentState != GhostState.InHouse &&
-            ghost.CurrentState != GhostState.LeavingHouse)
+            if (ghost.CurrentState != GhostState.Dead && ghost.CurrentState != GhostState.InHouse && ghost.CurrentState != GhostState.LeavingHouse)
             {
                 ghost.SetState(GhostState.Scared);
             }
         }
 
-
-        // start timer
         scaredTimer = 10f;
         ghostsAreScared = true;
     }
@@ -208,13 +230,23 @@ public class GameManager : MonoBehaviour
             musicSource.Play();
         }
     }
+    public void ForceGhostsIntoRecovery()
+    {
+        scaredTimer = 3f;
+        ghostsAreScared = true;
 
-    private void EndScaredState()
+        if (ghostTimerText != null)
+        {
+            ghostTimerText.text = Mathf.CeilToInt(scaredTimer).ToString();
+        }
+
+    }
+    public void EndScaredState() 
     {
         ghostsAreScared = false;
         ghostDeadMusicActive = false;
+        hasPowerPellet = false;
 
-        // Revert music
         if (musicSource != null && normalMusic != null)
         {
             musicSource.Stop();
@@ -223,11 +255,12 @@ public class GameManager : MonoBehaviour
             musicSource.Play();
         }
 
-        // Reset all ghosts to normal, except dead ones
         foreach (GhostController ghost in Object.FindObjectsByType<GhostController>(FindObjectsSortMode.None))
         {
             if (ghost.CurrentState != GhostState.Dead)
+            {
                 ghost.SetState(GhostState.Normal);
+            }
         }
     }
 
@@ -239,50 +272,58 @@ public class GameManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (scoreText)
-            scoreText.text = score.ToString();
+        if (scoreText != null)
+        {
+            scoreText.text = score.ToString("D6");
+        }
     }
 
     public void PlayerDied()
     {
-        if (playerIsDead) return; // prevent multiple triggers
+        if (playerIsDead) return;
         playerIsDead = true;
         isTiming = false;
 
         Debug.Log("Player has died!");
 
-        // Stop all music immediately
         if (musicSource != null)
+        {
             musicSource.Stop();
 
-        // Disable ghosts
+        }
+
+        if (musicSource != null && playerDeathClip != null)
+        {
+            musicSource.clip = playerDeathClip;
+            musicSource.loop = false;
+            musicSource.Play();
+        }
+
         foreach (GhostController ghost in Object.FindObjectsByType<GhostController>(FindObjectsSortMode.None))
         {
             ghost.enabled = false;
         }
 
-        // Disable player
         PacStudentController player = FindFirstObjectByType<PacStudentController>();
         if (player != null)
         {
             player.enabled = false;
             Animator anim = player.GetComponent<Animator>();
             if (anim != null)
+            {
                 anim.SetBool("IsDead", true);
+            }
         }
 
-        // Decrease life and update UI
         playerLives--;
         UpdateLivesUI();
 
-        // Check for Game Over
         if (playerLives <= 0)
         {
             StartCoroutine(GameOverSequence());
         }
         else
         {
-            // Pause before resetting if player still has lives
             StartCoroutine(RestartAfterDelay());
         }
     }
@@ -299,14 +340,15 @@ public class GameManager : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(elapsedTime / 60f);
         int seconds = Mathf.FloorToInt(elapsedTime % 60f);
-        int milliseconds = Mathf.FloorToInt((elapsedTime * 100f) % 100f); // 2-digit ms
+        int milliseconds = Mathf.FloorToInt((elapsedTime * 100f) % 100f);
 
         if (timerText != null)
+        {
             timerText.text = $"{minutes:00}:{seconds:00}:{milliseconds:00}";
+        }
+
     }
 
-    private int highScore;
-    private float bestTime;
     private void CheckAndSaveHighScore()
     {
         string currentScene = SceneManager.GetActiveScene().name;
@@ -319,9 +361,14 @@ public class GameManager : MonoBehaviour
         bool isNewHighScore = false;
 
         if (score > storedScore)
+        {
             isNewHighScore = true;
+        }
+
         else if (score == storedScore && elapsedTime < storedTime)
+        {
             isNewHighScore = true;
+        }
 
         if (isNewHighScore)
         {
@@ -339,15 +386,19 @@ public class GameManager : MonoBehaviour
         DisableGameplay();
 
         if (musicSource != null)
+        {
             musicSource.Stop();
+        }
+
 
         if (gameOverHUD != null)
+        {
             gameOverHUD.SetActive(true);
+        }
         
         CheckAndSaveHighScore();
         yield return new WaitForSeconds(3f);
 
-        // Load StartScene after 3 seconds
         SceneManager.LoadScene("StartScene");
     }
 
@@ -361,7 +412,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Resetting round...");
 
-        // Resume normal background music
         if (musicSource != null && normalMusic != null)
         {
             musicSource.Stop();
@@ -370,12 +420,20 @@ public class GameManager : MonoBehaviour
             musicSource.Play();
         }
 
-        // Reset ghosts instantly to home
         foreach (GhostController ghost in Object.FindObjectsByType<GhostController>(FindObjectsSortMode.None))
         {
             ghost.enabled = true;
             ghost.TeleportHome();
             StartCoroutine(ghost.WaitThenLeave());
+
+            Animator anim = ghost.GetComponent<Animator>();
+            if (anim != null)
+            {
+                anim.SetBool("IsDead", false);
+                anim.SetBool("IsRecovering", false);
+            }
+
+            ghost.SetState(GhostState.Normal);
         }
 
         PacStudentController player = FindFirstObjectByType<PacStudentController>();
@@ -384,9 +442,12 @@ public class GameManager : MonoBehaviour
             player.enabled = true;
             Animator anim = player.GetComponent<Animator>();
             if (anim != null)
+            {
                 anim.SetBool("IsDead", false); ;
+            }
         }
 
+        
         ghostsAreScared = false;
         ghostDeadMusicActive = false;
         playerIsDead = false;

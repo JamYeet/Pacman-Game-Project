@@ -76,13 +76,12 @@ public class LevelGenerator : MonoBehaviour
         int rows = levelMap.GetLength(0);
         int cols = levelMap.GetLength(1);
 
-        // Same mirrors you use when instantiating
         int[,] right = MirrorHorizontal(levelMap);
-        int[,] bottomL = MirrorVertical(levelMap); // NOTE: your MirrorVertical returns rows-1
+        int[,] bottomL = MirrorVertical(levelMap);
         int[,] bottomR = MirrorVertical(right);
 
-        int bottomRows = bottomL.GetLength(0);      // = rows - 1 with your current mirror
-        int fullRows = rows + bottomRows;         // top + bottom (no extra blank row)
+        int bottomRows = bottomL.GetLength(0);  
+        int fullRows = rows + bottomRows;
         int fullCols = cols * 2;
 
         fullMap = new int[fullRows, fullCols];
@@ -91,7 +90,7 @@ public class LevelGenerator : MonoBehaviour
         CopyQuadrant(levelMap, 0, 0);
         // TR
         CopyQuadrant(right, 0, cols);
-        // BL (starts immediately after top, no extra gap)
+        // BL
         CopyQuadrant(bottomL, rows, 0);
         // BR
         CopyQuadrant(bottomR, rows, cols);

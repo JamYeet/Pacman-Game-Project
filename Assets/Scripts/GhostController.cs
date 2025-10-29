@@ -33,7 +33,6 @@ public class GhostController : MonoBehaviour
 
     private float lerpProgress = 0f;
     private bool isMoving = false;
-    private bool returningHome = false;
 
     private Vector2Int exitDir;
     private Vector2Int doorPos;
@@ -48,17 +47,16 @@ public class GhostController : MonoBehaviour
         currentGrid = WorldToGrid(transform.position);
         spawnPos = transform.position;
 
-        // Assign exit direction and door target based on ghost ID
         switch (ghostID)
         {
             case 1:
                 exitDir = Vector2Int.up;
-                doorPos = FindNearestTileOfType(8, Vector2Int.up); // top door
+                doorPos = FindNearestTileOfType(8, Vector2Int.up);
                 homePos = spawnPos + new Vector3(0f, 0f, 0f);
                 break;
             case 2:
                 exitDir = Vector2Int.down;
-                doorPos = FindNearestTileOfType(8, Vector2Int.down); // bottom door
+                doorPos = FindNearestTileOfType(8, Vector2Int.down); 
                 homePos = spawnPos + new Vector3(0f, 0f, 0f);
                 break;
             case 3:
@@ -86,9 +84,10 @@ public class GhostController : MonoBehaviour
                 return;
 
             case GhostState.InHouse:
-                // Wait or bounce a little before leaving
                 if (!isMoving)
+                {
                     StartCoroutine(WaitThenLeave());
+                }
                 return;
 
             case GhostState.LeavingHouse:
@@ -98,9 +97,14 @@ public class GhostController : MonoBehaviour
 
         // Normal movement handling
         if (!isMoving)
+        {
             ChooseNextDirection();
+        }
         else
+        {
             MoveLerp();
+        }
+
 
         // Update animator
         animator.SetFloat("MoveX", moveDir.x);
@@ -109,8 +113,8 @@ public class GhostController : MonoBehaviour
 
     public IEnumerator WaitThenLeave()
     {
-        isMoving = true; // prevent multiple coroutines
-        yield return new WaitForSeconds(Random.Range(1f, 2f)); // add variety
+        isMoving = true; 
+        yield return new WaitForSeconds(Random.Range(1f, 2f)); 
         SetState(GhostState.LeavingHouse);
         isMoving = false;
     }
@@ -119,7 +123,6 @@ public class GhostController : MonoBehaviour
     {
         if (reachedDoor == false)
         {
-            // Move toward door
             Vector3 doorWorld = GridToWorld(doorPos);
             transform.position = Vector3.MoveTowards(transform.position, doorWorld, normalSpeed * Time.deltaTime);
 
@@ -131,11 +134,9 @@ public class GhostController : MonoBehaviour
         }
         else
         {
-            // Move out through the door direction (up or down)
             Vector3 outPos = transform.position + (Vector3)((Vector2)exitDir * cellSize * 1.5f);
             transform.position = Vector3.MoveTowards(transform.position, outPos, normalSpeed * Time.deltaTime);
 
-            // Check if we’re now standing on a walkable corridor (tile == 0)
             Vector2Int newGrid = WorldToGrid(transform.position);
             int tile = levelGen.fullMap[newGrid.y, newGrid.x];
 
@@ -163,9 +164,7 @@ public class GhostController : MonoBehaviour
                 if (map[y, x] == tileType)
                 {
                     Vector2Int tile = new Vector2Int(x, y);
-                    // Filter by direction (so up ghosts don’t pick bottom doors)
-                    if ((direction == Vector2Int.up && tile.y < currentGrid.y) ||
-                        (direction == Vector2Int.down && tile.y > currentGrid.y))
+                    if ((direction == Vector2Int.up && tile.y < currentGrid.y) || (direction == Vector2Int.down && tile.y > currentGrid.y))
                     {
                         int dist = Mathf.Abs(tile.x - currentGrid.x) + Mathf.Abs(tile.y - currentGrid.y);
                         if (dist < bestDist)
@@ -180,9 +179,6 @@ public class GhostController : MonoBehaviour
         return bestPos;
     }
 
-    //=========================================
-    // STATE MANAGEMENT
-    //=========================================
     public void SetState(GhostState newState)
     {
         if (CurrentState == newState) return;
@@ -191,7 +187,6 @@ public class GhostController : MonoBehaviour
         (newState == GhostState.Scared || newState == GhostState.Recovering))
         {
             Debug.Log("Ignored");
-            // Just ignore this request
             return;
         }
 
@@ -227,7 +222,6 @@ public class GhostController : MonoBehaviour
             case GhostState.Dead:
                 currentSpeed = deadSpeed;
                 animator.SetBool("IsDead", true);
-                returningHome = true;
                 break;
         }
     }
@@ -240,14 +234,12 @@ public class GhostController : MonoBehaviour
 
     private void MoveToHome()
     {
-        // Move toward ghost home position ignoring walls
         transform.position = Vector3.MoveTowards(transform.position, homePos, deadSpeed * Time.deltaTime);
         Debug.Log("Returning Home!");
 
         if (Vector3.Distance(transform.position, homePos) < 0.1f)
         {
             Debug.Log("I'm Home!");
-            returningHome = false;
             Respawn();
         }
     }
@@ -258,16 +250,14 @@ public class GhostController : MonoBehaviour
         ResetMovement();
         animator.SetBool("IsDead", false);
 
-        // Start recovering briefly before leaving again
         StartCoroutine(RecoverAndLeaveHouse());
     }
 
     private IEnumerator RecoverAndLeaveHouse()
     {
         SetState(GhostState.Recovering);
-        yield return new WaitForSeconds(2f); // stay recovering briefly
+        yield return new WaitForSeconds(2f);
 
-        // Re-enter house logic like at game start
         SetState(GhostState.InHouse);
         StartCoroutine(WaitThenLeave());
     }
@@ -284,9 +274,16 @@ public class GhostController : MonoBehaviour
         targetPos = homePos;
     }
 
-    //=========================================
-    // MOVEMENT
-    //=========================================
+
+    private void StartMove(Vector2Int dir)
+    {
+        lastDir = dir;
+        moveDir = dir;
+        startPos = transform.position;
+        targetGrid = currentGrid + dir;
+        targetPos = GridToWorld(targetGrid);
+        isMoving = true;
+    }
     private void MoveLerp()
     {
         lerpProgress += Time.deltaTime * currentSpeed / cellSize;
@@ -301,6 +298,23 @@ public class GhostController : MonoBehaviour
         }
     }
 
+    private bool CanMoveTo(Vector2Int gridPos)
+    {
+        int[,] map = levelGen.fullMap;
+        int rows = map.GetLength(0);
+        int cols = map.GetLength(1);
+
+        if (gridPos.x < 0 || gridPos.y < 0 || gridPos.x >= cols || gridPos.y >= rows) return false;
+
+        int tile = map[gridPos.y, gridPos.x];
+        bool isWalkable = (tile == 0 || tile == 5 || tile == 6);
+        bool isDoor = (tile == 8);
+
+        if (CurrentState == GhostState.LeavingHouse || CurrentState == GhostState.Dead) return isWalkable || isDoor;
+
+        return isWalkable;
+    }
+
     private void ChooseNextDirection()
     {
         List<Vector2Int> possibleDirs = new List<Vector2Int>()
@@ -308,9 +322,10 @@ public class GhostController : MonoBehaviour
             Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
         };
 
-        // No backtracking unless no choice
         if (lastDir != Vector2Int.zero)
+        {
             possibleDirs.Remove(-lastDir);
+        }
 
         List<Vector2Int> validDirs = new List<Vector2Int>();
 
@@ -318,33 +333,26 @@ public class GhostController : MonoBehaviour
         {
             Vector2Int check = currentGrid + dir;
             if (CanMoveTo(check))
+            {
                 validDirs.Add(dir);
+            }
+
         }
 
         if (validDirs.Count == 0)
+        {
             validDirs.Add(-lastDir);
+        }
+
 
         Vector2Int chosen = DecideDirection(validDirs);
         StartMove(chosen);
     }
 
-    private void StartMove(Vector2Int dir)
-    {
-        lastDir = dir;
-        moveDir = dir;
-        startPos = transform.position;
-        targetGrid = currentGrid + dir;
-        targetPos = GridToWorld(targetGrid);
-        isMoving = true;
-    }
-
-    //=========================================
-    // DECISION LOGIC
-    //=========================================
     private Vector2Int DecideDirection(List<Vector2Int> validDirs)
     {
-        if (player == null)
-            return validDirs[Random.Range(0, validDirs.Count)];
+        if (player == null) return validDirs[Random.Range(0, validDirs.Count)];
+
 
         Vector2 ghostPos = transform.position;
         Vector2 playerPos = player.position;
@@ -354,19 +362,19 @@ public class GhostController : MonoBehaviour
         {
             case GhostState.Scared:
             case GhostState.Recovering:
-                return ChooseDirectionAvoidingPlayer(validDirs, ghostPos, playerPos, currentDist);
+                return MoveDirectionAvoidingPlayer(validDirs, ghostPos, playerPos, currentDist);
 
             case GhostState.Normal:
                 switch (ghostID)
                 {
                     case 1:
-                        return ChooseDirectionAvoidingPlayer(validDirs, ghostPos, playerPos, currentDist);
+                        return MoveDirectionAvoidingPlayer(validDirs, ghostPos, playerPos, currentDist);
                     case 2:
-                        return ChooseDirectionChasingPlayer(validDirs, ghostPos, playerPos, currentDist);
+                        return MoveDirectionChasingPlayer(validDirs, ghostPos, playerPos, currentDist);
                     case 3:
                         return validDirs[Random.Range(0, validDirs.Count)];
                     case 4:
-                        return ChooseClockwise(validDirs);
+                        return MoveClockwise(validDirs);
                 }
                 break;
         }
@@ -374,77 +382,63 @@ public class GhostController : MonoBehaviour
         return validDirs[Random.Range(0, validDirs.Count)];
     }
 
-    private Vector2Int ChooseDirectionAvoidingPlayer(List<Vector2Int> validDirs, Vector2 ghostPos, Vector2 playerPos, float currentDist)
+    private Vector2Int MoveDirectionAvoidingPlayer(List<Vector2Int> validDirs, Vector2 ghostPos, Vector2 playerPos, float currentDist)
     {
         List<Vector2Int> furtherDirs = new List<Vector2Int>();
         foreach (var dir in validDirs)
         {
             Vector2 newPos = ghostPos + (Vector2)dir * cellSize;
             if (Vector2.Distance(newPos, playerPos) >= currentDist)
+            {
                 furtherDirs.Add(dir);
+            }
+
         }
         if (furtherDirs.Count > 0)
+        {
             return furtherDirs[Random.Range(0, furtherDirs.Count)];
+        }
+
         return validDirs[Random.Range(0, validDirs.Count)];
     }
 
-    private Vector2Int ChooseDirectionChasingPlayer(List<Vector2Int> validDirs, Vector2 ghostPos, Vector2 playerPos, float currentDist)
+    private Vector2Int MoveDirectionChasingPlayer(List<Vector2Int> validDirs, Vector2 ghostPos, Vector2 playerPos, float currentDist)
     {
         List<Vector2Int> closerDirs = new List<Vector2Int>();
         foreach (var dir in validDirs)
         {
             Vector2 newPos = ghostPos + (Vector2)dir * cellSize;
             if (Vector2.Distance(newPos, playerPos) <= currentDist)
+            {
                 closerDirs.Add(dir);
+            }
+
         }
         if (closerDirs.Count > 0)
+        {
             return closerDirs[Random.Range(0, closerDirs.Count)];
+        }
         return validDirs[Random.Range(0, validDirs.Count)];
     }
 
-    private Vector2Int ChooseClockwise(List<Vector2Int> validDirs)
+    private Vector2Int MoveClockwise(List<Vector2Int> validDirs)
     {
-        // Determine the right direction based on current movement
         Vector2Int right = new Vector2Int(moveDir.y, -moveDir.x);
         Vector2Int left = new Vector2Int(-moveDir.y, moveDir.x);
         Vector2Int forward = moveDir;
         Vector2Int back = -moveDir;
 
-        // Priority order (clockwise wall-following)
         Vector2Int[] priorities = { right, forward, left, back };
 
         foreach (var dir in priorities)
         {
             if (validDirs.Contains(dir))
+            {
                 return dir;
+            }
         }
 
-        // Fallback
         return validDirs[Random.Range(0, validDirs.Count)];
-    }
-
-    //=========================================
-    // GRID HELPERS
-    //=========================================
-    private bool CanMoveTo(Vector2Int gridPos)
-    {
-        int[,] map = levelGen.fullMap;
-        int rows = map.GetLength(0);
-        int cols = map.GetLength(1);
-
-        // Bounds check
-        if (gridPos.x < 0 || gridPos.y < 0 || gridPos.x >= cols || gridPos.y >= rows)
-            return false;
-
-        int tile = map[gridPos.y, gridPos.x];
-        bool isWalkable = (tile == 0 || tile == 5 || tile == 6);
-        bool isDoor = (tile == 8);
-
-        // Ghosts leaving house or dead can cross doors
-        if (CurrentState == GhostState.LeavingHouse || CurrentState == GhostState.Dead)
-            return isWalkable || isDoor;
-
-        return isWalkable;
     }
 
     private Vector3 GridToWorld(Vector2Int g)
@@ -464,26 +458,20 @@ public class GhostController : MonoBehaviour
         );
     }
 
-
-
-    //=========================================
-    // COLLISIONS
-    //=========================================
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!collision.CompareTag("Player")) return;
 
-        // Dead ghosts: ignore collisions
         if (CurrentState == GhostState.Dead) return;
 
         if (CurrentState == GhostState.Normal)
         {
             GameManager.Instance.PlayerDied();
-            Debug.Log($"{name} hit the player!");
+            Debug.Log($"Ghost hit the player!");
         }
         else if (CurrentState == GhostState.Scared || CurrentState == GhostState.Recovering)
         {
-            Debug.Log($"{name} was eaten!");
+            Debug.Log("Ghost was eaten!");
             GameManager.Instance.AddScore(300);
             GameManager.Instance.PlayGhostDeadMusic();
 

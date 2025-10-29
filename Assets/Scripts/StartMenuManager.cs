@@ -40,8 +40,21 @@ public class StartMenuManager : MonoBehaviour
         { 
             level1Button.onClick.AddListener(() => LoadScene("ManualLevel"));
         }
-        if (dotsA != null) dotsA.SetActive(true);
-        if (dotsB != null) dotsB.SetActive(false);
+
+        if (level2Button != null)
+        {
+            level2Button.onClick.AddListener(() => LoadScene("InnovationLevel"));
+        }
+
+        if (dotsA != null)
+        {
+            dotsA.SetActive(true);
+        }
+
+        if (dotsB != null)
+        {
+            dotsB.SetActive(false);
+        }
     }
 
     void Update()
@@ -56,12 +69,17 @@ public class StartMenuManager : MonoBehaviour
         float l1Time = PlayerPrefs.GetFloat("ManualLevel_BestTime", Mathf.Infinity);
 
         if (level1ScoreText != null)
+        {
             level1ScoreText.text = $"{l1Score}";
+        }
+
 
         if (level1TimeText != null)
         {
             if (l1Time == Mathf.Infinity)
-                level1TimeText.text = "--:--:--";
+            {
+                level1TimeText.text = "00:00:00";
+            }
             else
             {
                 int m = Mathf.FloorToInt(l1Time / 60f);
@@ -72,22 +90,26 @@ public class StartMenuManager : MonoBehaviour
         }
 
         // LEVEL 2
-        int l2Score = PlayerPrefs.GetInt("Level2_HighScore", 0);
-        float l2Time = PlayerPrefs.GetFloat("Level2_BestTime", Mathf.Infinity);
+        int l2Score = PlayerPrefs.GetInt("InnovationLevel_HighScore", 0);
+        float l2Time = PlayerPrefs.GetFloat("InnovationLevel_BestTime", Mathf.Infinity);
 
         if (level2ScoreText != null)
+        {
             level2ScoreText.text = $"{l2Score}";
+        }
 
         if (level2TimeText != null)
         {
             if (l2Time == Mathf.Infinity)
-                level2TimeText.text = "--:--:--";
+            {
+                level2TimeText.text = "00:00:00";
+            }
             else
             {
                 int m = Mathf.FloorToInt(l2Time / 60f);
                 int s = Mathf.FloorToInt(l2Time % 60f);
                 int ms = Mathf.FloorToInt((l2Time * 100f) % 100f);
-                level2TimeText.text = $"Best Time: {m:00}:{s:00}:{ms:00}";
+                level2TimeText.text = $"{m:00}:{s:00}:{ms:00}";
             }
         }
     }
@@ -100,8 +122,14 @@ public class StartMenuManager : MonoBehaviour
             timer = 0f;
             showingA = !showingA;
 
-            if (dotsA != null) dotsA.SetActive(showingA);
-            if (dotsB != null) dotsB.SetActive(!showingA);
+            if (dotsA != null)
+            {
+                dotsA.SetActive(showingA);
+            }
+            if (dotsB != null)
+            {
+                dotsB.SetActive(!showingA);
+            }
         }
     }
 

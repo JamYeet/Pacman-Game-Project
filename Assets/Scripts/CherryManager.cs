@@ -10,20 +10,32 @@ public class CherryManager : MonoBehaviour
     public Vector2 levelSize = new Vector2(27f, 29f);
 
     private GameObject currentCherry;
+    private Coroutine spawnRoutine;
 
-    void Start()
+    void OnEnable()
     {
-        StartCoroutine(CherrySpawnLoop());
+        if (spawnRoutine == null)
+        {
+            spawnRoutine = StartCoroutine(CherrySpawnLoop());
+        }
+    }
+
+    void OnDisable()
+    {
+        if (spawnRoutine != null)
+        {
+            StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+        }
     }
 
     IEnumerator CherrySpawnLoop()
     {
-        // Wait 5 s before first cherry
+        // Wait
         yield return new WaitForSeconds(spawnDelay);
 
         while (true)
         {
-            // Spawn and track the instance
             var cherryInstance = Instantiate(cherryPrefab);
             currentCherry = cherryInstance;
 
@@ -31,10 +43,8 @@ public class CherryManager : MonoBehaviour
             ctrl.levelCenter = levelCenter;
             ctrl.levelSize = levelSize;
 
-            // Wait until the instance is gone
             yield return new WaitUntil(() => currentCherry == null);
 
-            // Wait 5 s after destruction before next spawn
             yield return new WaitForSeconds(spawnDelay);
         }
     }

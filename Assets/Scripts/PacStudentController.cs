@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class PacStudentController : MonoBehaviour
 {
@@ -40,6 +43,12 @@ public class PacStudentController : MonoBehaviour
 
     private static readonly Vector2 MAP_ORIGIN = new Vector2(-13.5f, 14.5f);
 
+    public GameObject throwablePelletPrefab;
+    private bool hasPowerPellet = false;
+    public UnityEngine.UI.Image batIcon;
+    private Color batColorInactive = new Color(1f, 1f, 1f, 0.08f); 
+    private Color batColorActive = new Color(1f, 1f, 1f, 1f);
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +56,6 @@ public class PacStudentController : MonoBehaviour
         currentInput = Vector2Int.right;
         lastInput = Vector2Int.right;
 
-        // Explicitly set starting grid coord (1,1), then place in world
         currentGridPos = new Vector2Int(1, 1);
         transform.position = GridToWorld(currentGridPos);
     }
@@ -57,6 +65,14 @@ public class PacStudentController : MonoBehaviour
     {
         HandleInput();
 
+        if (hasPowerPellet != GameManager.Instance.hasPowerPellet)
+        {
+            hasPowerPellet = GameManager.Instance.hasPowerPellet;
+
+            if (batIcon != null)
+                batIcon.color = hasPowerPellet ? batColorActive : batColorInactive;
+        }
+
         if (!isMoving)
         {
             Move();
@@ -65,13 +81,47 @@ public class PacStudentController : MonoBehaviour
         {
             LerpMove();
         }
+
+        if (hasPowerPellet && Input.GetKeyDown(KeyCode.Q))
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            if (currentScene == "InnovationLevel")
+            {
+                ThrowPellet();
+            }
+        }
+
         UpdateAnimation();
         HandleAudioAndParticles();
     }
 
+    void ThrowPellet()
+    {
+        Vector2 dir = Vector2.zero;
+        if (animator.GetFloat("MoveX") != 0)
+        {
+            dir = new Vector2(animator.GetFloat("MoveX"), 0);
+        }
+        else if (animator.GetFloat("MoveY") != 0)
+        {
+            dir = new Vector2(0, -animator.GetFloat("MoveY"));
+        }
+        else
+        {
+            dir = Vector2.right;
+        }
+
+        GameObject pellet = Instantiate(throwablePelletPrefab, transform.position, Quaternion.identity);
+        pellet.GetComponent<ThrowablePellet>().Launch(dir);
+        GameManager.Instance.hasPowerPellet = false;
+        if (batIcon != null)
+        {
+            batIcon.color = batColorInactive;
+        }
+    }
+
     void HandleInput()
     {
-        // Record only when player presses a new key
         if (Input.GetKeyDown(KeyCode.W))
         {
             lastInput = Vector2Int.down;
@@ -115,7 +165,6 @@ public class PacStudentController : MonoBehaviour
         {
             isMoving = false;
 
-            // Only trigger bump if cooldown expired
             if (bumpTimer <= 0f && bumpCooldown == false)
             {
                 bumpCooldown = true;
@@ -127,7 +176,6 @@ public class PacStudentController : MonoBehaviour
                     audioSource.PlayOneShot(bumpClip);
                 }
 
-                // Play bump particles
                 if (wallBumpEffect != null)
                 {
                     Vector3 bumpPos = GridToWorld(currentGridPos + lastInput);
@@ -135,15 +183,14 @@ public class PacStudentController : MonoBehaviour
                     wallBumpEffect.Play();
                 }
 
-                // Start cooldown (so the sound doesn’t spam)
-                bumpTimer = 0.25f; // adjust timing as you like
+                bumpTimer = 0.25f; 
             }
         }
     }
 
     void LerpMove()
     {
-        lerpProgress += moveSpeed * Time.deltaTime / cellSize;
+        lerpProgress += moveSpeed * Time.deltaTime;
         transform.position = Vector3.Lerp(startPos, targetPos, lerpProgress);
 
         if (lerpProgress >= 1f)
@@ -162,14 +209,12 @@ public class PacStudentController : MonoBehaviour
         int rows = map.GetLength(0);
         int cols = map.GetLength(1);
 
-        // Teleport from left tunnel to right side
         if (currentGridPos.x < 0)
         {
             currentGridPos = new Vector2Int(cols - 1, currentGridPos.y);
             transform.position = GridToWorld(currentGridPos);
         }
 
-        // Teleport from right tunnel to left side
         else if (currentGridPos.x >= cols)
         {
             currentGridPos = new Vector2Int(0, currentGridPos.y);
@@ -190,21 +235,18 @@ public class PacStudentController : MonoBehaviour
     {
         if (animator == null) return;
 
-        // Detect when we start moving after being idle
         if (!isActuallyMoving && isMoving)
         {
             isActuallyMoving = true;
             animator.SetBool("IsMoving", true);
         }
 
-        // Detect when we’ve come to a complete stop
         if (isActuallyMoving && !isMoving && !CanMoveTo(currentGridPos + currentInput))
         {
             isActuallyMoving = false;
             animator.SetBool("IsMoving", false);
         }
 
-        // Direction changes only when input changes
         if (currentInput != lastAnimDir)
         {
             animator.SetFloat("MoveX", currentInput.x);
@@ -251,7 +293,6 @@ public class PacStudentController : MonoBehaviour
         int rows = map.GetLength(0);
         int cols = map.GetLength(1);
 
-        // Left/right tunnel wrap on the same row
         if (gridPos.x < 0 && gridPos.y >= 0 && gridPos.y < rows)
         {
             targetGridPos = new Vector2Int(cols - 1, gridPos.y);
@@ -263,14 +304,10 @@ public class PacStudentController : MonoBehaviour
             return true;
         }
 
-        // Bounds
-        if (gridPos.x < 0 || gridPos.y < 0 || gridPos.x >= cols || gridPos.y >= rows)
-            return false;
+        if (gridPos.x < 0 || gridPos.y < 0 || gridPos.x >= cols || gridPos.y >= rows) return false;
 
-        // Direct lookup (no flip, because our worldgrid already handles Y inversion)
         int tile = map[gridPos.y, gridPos.x];
 
-        // Walkability
         if (tile == 8) return false;                 // ghost gate blocks PacStudent
         return tile == 0 || tile == 5 || tile == 6;  // empty/pellet/power
     }
@@ -288,6 +325,11 @@ public class PacStudentController : MonoBehaviour
         else if (collision.CompareTag("PowerPellet"))
         {
             Debug.Log("PowerPellet! 50 Points!");
+            GameManager.Instance.hasPowerPellet = false;
+            if (batIcon != null)
+            {
+                batIcon.color = batColorActive;
+            }
             GameManager.Instance.ActivatePowerPellet();
             Destroy(collision.gameObject);
         }
@@ -301,49 +343,11 @@ public class PacStudentController : MonoBehaviour
 
     Vector3 GridToWorld(Vector2Int g)
     {
-        // Y increases downward in the grid, so subtract on world Y
         return new Vector3(
             MAP_ORIGIN.x + g.x * cellSize,
             MAP_ORIGIN.y - g.y * cellSize,
             transform.position.z
         );
     }
-
-#if UNITY_EDITOR
-    void OnDrawGizmos()
-    {
-        if (levelGen == null || levelGen.fullMap == null) return;
-
-        int[,] map = levelGen.fullMap;
-        int rows = map.GetLength(0);
-        int cols = map.GetLength(1);
-
-        for (int y = 0; y < rows; y++)
-        {
-            for (int x = 0; x < cols; x++)
-            {
-                Vector3 pos = new Vector3(
-                    MAP_ORIGIN.x + x * cellSize,
-                    MAP_ORIGIN.y - y * cellSize,
-                    0
-                );
-
-                int tile = map[y, x]; // same indexing as CanMoveTo (no flip)
-                bool walkable = (tile == 0 || tile == 5 || tile == 6);
-
-                Gizmos.color = walkable
-                    ? new Color(0f, 1f, 0f, 0.15f)
-                    : new Color(1f, 0f, 0f, 0.25f);
-
-                Gizmos.DrawCube(pos, Vector3.one * (cellSize * 0.9f));
-            }
-        }
-
-        // PacStudent's current tile highlight
-        Gizmos.color = Color.yellow;
-        Vector3 currentTilePos = GridToWorld(currentGridPos);
-        Gizmos.DrawWireCube(currentTilePos, Vector3.one * (cellSize * 1.2f));
-    }
-#endif
 }
 

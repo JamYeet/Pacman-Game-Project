@@ -66,14 +66,4 @@ public class CherryController : MonoBehaviour
             yield return null;
         }
     }
-
-    // Future: handle PacStudent collisions
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player")) // PacStudent tagged "Player"
-        {
-            Debug.Log("PacStudent collected cherry!");
-            Destroy(gameObject);
-        }
-    }
 }

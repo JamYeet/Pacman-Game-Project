@@ -35,13 +35,25 @@ public class PacStudentMovement : MonoBehaviour
 
         if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
         {
-            if (dir.x > 0) anim.Play("Player_Walk_Right");
-            else if (dir.x < 0) anim.Play("Player_Walk_Left");
+            if (dir.x > 0)
+            {
+                anim.Play("Player_Walk_Right");
+            }
+            else if (dir.x < 0)
+            {
+                anim.Play("Player_Walk_Left");
+            }
         }
         else
         {
-            if (dir.y > 0) anim.Play("Player_Walk_Up");
-            else if (dir.y < 0) anim.Play("Player_Walk_Down");
+            if (dir.y > 0)
+            {
+                anim.Play("Player_Walk_Up");
+            }
+            else if (dir.y < 0)
+            {
+                anim.Play("Player_Walk_Down");
+            }
         }
     }
 }
